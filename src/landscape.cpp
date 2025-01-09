@@ -5,6 +5,7 @@
 #include "landscape.h"
 #include "simulator.h"
 #include "individual.h"
+#include <iterator>
 
 
 // TCell == operator overload: tests whether two cells are equal
@@ -39,7 +40,7 @@ ostream& operator<<(ostream& os, const TCell& c)
 ostream& operator<<(ostream& os, const THomeRange& hr)
 {
  os << '{';
- ostream_iterator<TCell,char> oo(os,",");
+ std::ostream_iterator<TCell,char> oo(os,",");
  copy(hr.begin(),--hr.end(),oo);
  os<<hr.back();
  os << '}';
