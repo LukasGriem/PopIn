@@ -291,8 +291,8 @@ indmodel <- function(land_r="", param="", file="")
   
   time_ext_av <- mean(time_ext_byrep)
   
-  cat("start.time = ", start.time, "\n")
-  cat("end.time = ", date(), "\n", "\n")
+  # cat("start.time = ", start.time, "\n")
+  # cat("end.time = ", date(), "\n", "\n")
   
   if(plotYN==TRUE){
     # plot population size as a function of time (steps)
