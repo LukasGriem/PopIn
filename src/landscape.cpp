@@ -162,41 +162,46 @@ bool TLandscape::ChooseStartingPointMode0(TCell& startcell)
  return true;
 }
 
-// Local dispersal mode: local habitat choice in a kernel
+// Local dispersal mode: local habitat choice in a kernel (NEW: SELECTS BEST AVAILABLE HABITAT IN KERNEL)
 // Chooses starting point for the home range based on local dispersal from mother cell
 bool TLandscape::ChooseStartingPointMode1(TCell& startcell,
                                           TCell& mothercell)
 {
- double maxaffty = mfree.max(); // calculates the maximum available affinity in the matrix
- if (maxaffty<0)                // if matrix if full it is not possible to choose start point
-   return false;
-   
- int r=simulator->GetDispersalDistance();
- int rsq=SQR(r);                 // stores rˆ2 in variable rsq
-
- vector<TCell> vlandmax(4*rsq);  // Creates vector to store dispersal kernel. The size is 4*rˆ2
-                                 // This is a square, centered in the mother cell, with width 2r and height 2r
-
- int ncells=0;
-
- for (int i=MAX(mothercell.x-r,0); i<MIN(mothercell.x+r+1,xmax); i++)
-   for (int j=MAX(mothercell.y-r,0); j<MIN(mothercell.y+r+1,ymax); j++)
-       //for all cells in the square enclosing the kernel
-     if (mfree[i][j]==maxaffty) //if the cell is free
-       if (SQR(i-mothercell.x)+SQR(j-mothercell.y) <= rsq) //and if the cell is in a circle of radius r
-         {
-         vlandmax[ncells]=TCell(i,j); // then add the cell to dispersal kernel
-         ncells++;
-         }
- if (ncells>0)
-  {
-  int start = simulator->sto->IRandom(0,ncells-1); // generates random integer between 0 and ncells-1
-  startcell = vlandmax[start]; // choose a random cell for the vector of the dispersal kernel cells
-  return true;
-  }
- else return false;
+  int r = simulator->GetDispersalDistance();
+  int rsq = SQR(r);                 // stores r^2 in variable rsq
+  
+  vector<TCell> vlandmax(4 * rsq);  // Creates vector to store dispersal kernel
+  int ncells = 0;
+  
+  double local_maxaffty = -1; // Initialize local maximum affinity
+  
+  for (int i = MAX(mothercell.x - r, 0); i < MIN(mothercell.x + r + 1, xmax); i++)
+    for (int j = MAX(mothercell.y - r, 0); j < MIN(mothercell.y + r + 1, ymax); j++)
+      if (SQR(i - mothercell.x) + SQR(j - mothercell.y) <= rsq) // Check if cell is in circle
+        local_maxaffty = MAX(local_maxaffty, mfree[i][j]); // Update local max affinity
+      
+      if (local_maxaffty < 0) // If no cells have affinity > 0
+        return false;
+      
+      for (int i = MAX(mothercell.x - r, 0); i < MIN(mothercell.x + r + 1, xmax); i++)
+        for (int j = MAX(mothercell.y - r, 0); j < MIN(mothercell.y + r + 1, ymax); j++)
+          if (mfree[i][j] == local_maxaffty && // Check if the cell matches local max affinity
+              SQR(i - mothercell.x) + SQR(j - mothercell.y) <= rsq) // and lies in the circle
+          {
+            vlandmax[ncells] = TCell(i, j); // Add the cell to the dispersal kernel
+            ncells++;
+          }
+          
+          if (ncells > 0)
+          {
+            int start = simulator->sto->IRandom(0, ncells - 1); // Randomly select a cell
+            startcell = vlandmax[start]; // Set the chosen cell as the start cell
+            return true;
+          }
+          else
+            return false;
 }
-
+// 
 // Local dispersal mode: random walk
 // Chooses starting point for the home range based on random-walk from mother cell
 bool TLandscape::ChooseStartingPointMode2(TCell& startcell,
