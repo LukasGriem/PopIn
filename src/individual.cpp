@@ -62,12 +62,22 @@ bool TIndividual::ApplyMortality()
 // Returns true if the individual dies and false if the individual survives
 
 bool TIndividual::ApplySpatialMortality() {
-  if (hrcenter.x > 50 || hrcenter.y > 50) {
-    return true;  // The individual dies
+  // Generate a random center point
+  int center_x = 50;  // Replace MAX_X with landscape width
+  int center_y = 50;  // Replace MAX_Y with landscape height
+  
+  // Define mortality radius
+  int radius = 30;  // Adjust as needed
+  
+  // Compute squared Euclidean distance to avoid sqrt()
+  int dx = hrcenter.x - center_x;
+  int dy = hrcenter.y - center_y;
+  
+  if (dx * dx + dy * dy <= radius * radius) {
+    return true;  // Kill the individual if within radius
   }
-  return false;  // The individual survives
+  return false;  // Otherwise, survive
 }
-
 
 // ApplyBreeding: Produces the fledglings of an individual in a given year
 
