@@ -25,7 +25,7 @@ List indmodelseC(
       double sink_avoidance=0.5,
       double neigh_avoidance=1.0,
       double sink_mortality=0.7,
-      Rcpp::List extinction_matrices=0,  // <-- ADD EXTINCTION MATRICE PARAMETER
+      Rcpp::List extinction_matrices = Rcpp::List(),  // <-- Fixed: default to empty list
       const char* file_name="Res_imse")
 {
 
