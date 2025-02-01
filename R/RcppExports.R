@@ -5,7 +5,7 @@
 #' @importFrom Rcpp sourceCpp
 NULL
 
-indmodelseC <- function(land_r, nrow, ncol, n_steps = 20L, init_population = 10L, hr_size = 1L, birth_rate = 2.0, breeding_age = 1L, survival = 0.4, distance_weight = 0.001, dispersal_distance = 5.0, dispersal_mode = 2L, sink_avoidance = 0.5, neigh_avoidance = 1.0, sink_mortality = 0.7, new_var = 1, file_name = "Res_imse") {
-    .Call('_PopIn_indmodelseC', PACKAGE = 'PopIn', land_r, nrow, ncol, n_steps, init_population, hr_size, birth_rate, breeding_age, survival, distance_weight, dispersal_distance, dispersal_mode, sink_avoidance, neigh_avoidance, sink_mortality, new_var, file_name)
+indmodelseC <- function(land_r, nrow, ncol, n_steps = 20L, init_population = 10L, hr_size = 1L, birth_rate = 2.0, breeding_age = 1L, survival = 0.4, distance_weight = 0.001, dispersal_distance = 5.0, dispersal_mode = 2L, sink_avoidance = 0.5, neigh_avoidance = 1.0, sink_mortality = 0.7, extinction_matrices = 0L, file_name = "Res_imse") {
+    .Call('_PopIn_indmodelseC', PACKAGE = 'PopIn', land_r, nrow, ncol, n_steps, init_population, hr_size, birth_rate, breeding_age, survival, distance_weight, dispersal_distance, dispersal_mode, sink_avoidance, neigh_avoidance, sink_mortality, extinction_matrices, file_name)
 }
 
