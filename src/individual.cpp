@@ -76,7 +76,7 @@ bool TIndividual::ApplySpatialMortality() {
   int center_y = rand() % max_y;
   
   // Define mortality radius
-  int radius = 40;
+  int radius = 80;
   
   // Compute squared Euclidean distance to avoid sqrt()
   int dx = hrcenter.x - center_x;
