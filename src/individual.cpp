@@ -60,14 +60,23 @@ bool TIndividual::ApplyMortality()
 
 // ApplySpatialMortality: Kills all individuals at specific locations
 // Returns true if the individual dies and false if the individual survives
-
 bool TIndividual::ApplySpatialMortality() {
-  // Generate a random center point
-  int center_x = 50;  // Replace MAX_X with landscape width
-  int center_y = 50;  // Replace MAX_Y with landscape height
+  if (!simulator) return false;  // Ensure simulator exists
+  
+  // Get landscape from simulator
+  TLandscape* landscape = simulator->GetLandscape();
+  if (!landscape) return false;  // Ensure landscape exists
+  
+  // Get landscape dimensions
+  int max_x = landscape->xmax;  // Directly access xmax
+  int max_y = landscape->ymax;  // Directly access ymax
+  
+  // Generate a random center point within the landscape bounds
+  int center_x = rand() % max_x;
+  int center_y = rand() % max_y;
   
   // Define mortality radius
-  int radius = 30;  // Adjust as needed
+  int radius = 40;
   
   // Compute squared Euclidean distance to avoid sqrt()
   int dx = hrcenter.x - center_x;
@@ -78,6 +87,9 @@ bool TIndividual::ApplySpatialMortality() {
   }
   return false;  // Otherwise, survive
 }
+
+
+
 
 // ApplyBreeding: Produces the fledglings of an individual in a given year
 

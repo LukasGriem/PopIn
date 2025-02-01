@@ -41,6 +41,8 @@ class TLandscape
    double EvaluatePoint (const TCell& pt, const TCell& ctr);
    TCell HomeRangeCenter(const THomeRange&);
    double CalculateOptimalFitness();
+   int xmax;
+   int ymax;
  private:
    bool ChooseStartingPoint(TCell&, TCell&);
    bool ChooseStartingPointMode0(TCell&);
@@ -50,8 +52,7 @@ class TLandscape
    void CalculateNeighbors(THomeRange&, TNeighbors&);
    TCell ChoosePoint(const THomeRange& homerange, TNeighbors& neighbors);
 
-   int xmax;
-   int ymax;
+
    Mat_DP mland;        // a matrix of the landscape with each cell having an affinity value (between 0 and 1)
    Mat_DP mfree;        // a matrix where the occupied cells have value -1, only free cells have the correct affinity
    TSimulator* simulator;
