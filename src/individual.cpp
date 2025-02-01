@@ -70,10 +70,10 @@ bool TIndividual::ApplySpatialMortality() {
   int max_y = landscape->ymax;
   
   // Randomly select a mortality center
-  int center_x = rand() % max_x;
-  int center_y = rand() % max_y;
+  int center_x = 50;
+  int center_y = 50;
   
-  int radius = 20;  // Define mortality radius
+  int radius = 50;  // Define mortality radius
   
   // Compute toroidal (wrapped) Euclidean distance
   int dx = abs(hrcenter.x - center_x);
