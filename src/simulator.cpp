@@ -129,15 +129,7 @@ void TSimulator::Step()
  population.insert(population.end(), popjuv.begin(), popjuv.end());
  
  
- // apply spatially autocorrelated mortality
- population.erase(
-   remove_if(population.begin(), population.end(),
-             [](TIndividual& ind) { return ind.ApplySpatialMortality(); }),
-             population.end());
- 
- 
- landscape->Update(population);  //actualize matrix of free cells opened by spatial mortality
- 
+
  
  /*cout << population.size() << ' '; */
  
