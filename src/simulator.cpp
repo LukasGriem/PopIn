@@ -128,6 +128,17 @@ void TSimulator::Step()
  //insert juveniles into the adult population
  population.insert(population.end(), popjuv.begin(), popjuv.end());
  
+ 
+ // apply spatially autocorrelated mortality
+ population.erase(
+   remove_if(population.begin(), population.end(),
+             [](TIndividual& ind) { return ind.ApplySpatialMortality(); }),
+             population.end());
+ 
+ 
+ landscape->Update(population);  //actualize matrix of free cells opened by spatial mortality
+ 
+ 
  /*cout << population.size() << ' '; */
  
  //writes in the output file the list of the cells of each individual and the ages of each individual
@@ -204,3 +215,14 @@ TSimulator::~TSimulator()
  delete landscape;
 }
 
+
+std::vector<std::string> TSimulator::GetHomeRangeHistory()
+{
+  std::vector<std::string> step_home_ranges;
+  for (TPopulation::iterator i = population.begin(); i != population.end(); i++) {
+    std::ostringstream hr_stream;
+    i->OutputHomeRange(hr_stream);
+    step_home_ranges.push_back(hr_stream.str());  // Store home range as string
+  }
+  return step_home_ranges;
+}

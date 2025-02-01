@@ -32,7 +32,7 @@ void TIndividual::SettleHomeRange()
 
 // OutputHomeRange: Writes the homerange cells in a file
 
-void TIndividual::OutputHomeRange(ofstream& os)
+void TIndividual::OutputHomeRange(ostream& os)
 {
  //#define os cout
  os << homerange;
@@ -56,6 +56,16 @@ bool TIndividual::ApplyMortality()
       return false;                 //then individual survives
     return true;                    //otherwise dies
    }
+}
+
+// ApplySpatialMortality: Kills all individuals at specific locations
+// Returns true if the individual dies and false if the individual survives
+
+bool TIndividual::ApplySpatialMortality() {
+  if (hrcenter.x > 50 || hrcenter.y > 50) {
+    return true;  // The individual dies
+  }
+  return false;  // The individual survives
 }
 
 

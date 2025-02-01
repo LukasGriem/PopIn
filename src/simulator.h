@@ -8,6 +8,7 @@
 #include "landscape.h"
 #include "individual.h"
 
+
 using namespace std;
 
 /* ----------------------
@@ -100,7 +101,7 @@ class TSimulator
         double GetSinkAvoidance() {return sinkavoidance;}
         double GetNeighAvoidance() {return neighavoidance;}
         double GetSinkMortality() {return sinkmortality;}
-    
+
         int GetStep() {return step;}
 		int GetNSteps() {return nsteps;}
         StochasticLib1* sto;
