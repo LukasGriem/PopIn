@@ -180,7 +180,7 @@ bool TLandscape::ChooseStartingPointMode1(TCell& startcell,
       if (SQR(i - mothercell.x) + SQR(j - mothercell.y) <= rsq) // Check if cell is in circle
         local_maxaffty = MAX(local_maxaffty, mfree[i][j]); // Update local max affinity
       
-      if (local_maxaffty < 0) // If no cells have affinity > 0
+      if (local_maxaffty < 0) // If no cells have affinity > -1
         return false;
       
       for (int i = MAX(mothercell.x - r, 0); i < MIN(mothercell.x + r + 1, xmax); i++)

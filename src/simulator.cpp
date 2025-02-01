@@ -215,14 +215,3 @@ TSimulator::~TSimulator()
  delete landscape;
 }
 
-
-std::vector<std::string> TSimulator::GetHomeRangeHistory()
-{
-  std::vector<std::string> step_home_ranges;
-  for (TPopulation::iterator i = population.begin(); i != population.end(); i++) {
-    std::ostringstream hr_stream;
-    i->OutputHomeRange(hr_stream);
-    step_home_ranges.push_back(hr_stream.str());  // Store home range as string
-  }
-  return step_home_ranges;
-}
