@@ -20,6 +20,8 @@
 #-----------------------------------------------------------------------------------------#
 ############################## sigma2 - dispersal variance ################################
 
+
+
 # needs sigma_median, u
 
 sigma2 <- function(sigma_median = 7*sqrt(129.89), u = 1/16) 
@@ -162,6 +164,7 @@ indmodel <- function(land_r="", param="", file="")
   else if(any(param!="")){
     # if the user provides a list with the parameter values
     # read user list
+    extinction_matrices <- param$extinction_matrices
     n_rep <- param$n_rep
     hab_aff <- param$hab_aff
     n_steps <- param$n_steps 
@@ -248,7 +251,8 @@ indmodel <- function(land_r="", param="", file="")
                                             hr_size, birth_rate, breeding_age, survival, 
                                             distance_weight, dispersal_distance, 
                                             dispersal_mode, sink_avoidance, 
-                                            neigh_avoidance, sink_mortality, file_name_i)
+                                            neigh_avoidance, sink_mortality, file_name_i,
+                                            extinction_matrices)
                                 )
                       )
   }  

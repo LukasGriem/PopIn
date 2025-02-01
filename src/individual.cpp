@@ -60,31 +60,23 @@ bool TIndividual::ApplyMortality()
 
 // ApplySpatialMortality: Kills all individuals at specific locations
 // Returns true if the individual dies and false if the individual survives
-bool TIndividual::ApplySpatialMortality() {
-  if (!simulator) return false;  
+bool TIndividual::ApplySpatialMortality(int step) {
+  if (!simulator) return false;
   
-  TLandscape* landscape = simulator->GetLandscape();
-  if (!landscape) return false;
+  Rcpp::List extinction_matrices = simulator->GetExtinctionMatrices();
   
-  int max_x = landscape->xmax;
-  int max_y = landscape->ymax;
+  if (step >= extinction_matrices.size()) return false;  // Prevent out-of-bounds error
+  Rcpp::NumericMatrix extinction_matrix = extinction_matrices[step];
   
-  // Randomly select a mortality center
-  int center_x = 50;
-  int center_y = 50;
+  int x = hrcenter.x;
+  int y = hrcenter.y;
   
-  int radius = 50;  // Define mortality radius
+  if (x < 0 || x >= extinction_matrix.nrow() || y < 0 || y >= extinction_matrix.ncol()) {
+    return false;  // Out of bounds, individual survives
+  }
   
-  // Compute toroidal (wrapped) Euclidean distance
-  int dx = abs(hrcenter.x - center_x);
-  int dy = abs(hrcenter.y - center_y);
-  
-  // Apply periodic boundary conditions
-  dx = std::min(dx, max_x - dx);  // Wrap around in x-direction
-  dy = std::min(dy, max_y - dy);  // Wrap around in y-direction
-  
-  // Apply mortality if within the radius
-  return (dx * dx + dy * dy <= radius * radius);
+  double extinction_prob = extinction_matrix(x, y);
+  return (R::runif(0, 1) < extinction_prob);
 }
 
 

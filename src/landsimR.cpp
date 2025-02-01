@@ -25,6 +25,7 @@ List indmodelseC(
       double sink_avoidance=0.5,
       double neigh_avoidance=1.0,
       double sink_mortality=0.7,
+      Rcpp::List extinction_matrices=0,  // <-- ADD EXTINCTION MATRICE PARAMETER
       const char* file_name="Res_imse")
 {
 
@@ -57,6 +58,7 @@ TSimParam param;
    param.sinkavoidance = sink_avoidance;
    param.neighavoidance = neigh_avoidance;
    param.sinkmortality = sink_mortality;
+   param.extinction_matrices = extinction_matrices;  // <-- ADDed THIS LINE
    param.filename = file_name;
       // name the file that is created with the results
       // of the simulation when indmodel.se is run

@@ -13,7 +13,7 @@ class TIndividual
          const THomeRange& GetHomeRange() const {return homerange;}
          unsigned int GetAge() {return age;}
          bool ApplyMortality();
-         bool ApplySpatialMortality();
+         bool ApplySpatialMortality(int step);
          void ApplyBreeding(TPopulation& popjuv);
          bool HasEmptyHomeRange() {return homerange.empty();}
          void OutputHomeRange(ostream&);
