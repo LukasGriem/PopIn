@@ -7,6 +7,8 @@
 #include <list>
 #include "landscape.h"
 #include "individual.h"
+#include <Rcpp.h>  // <-- ADD THIS LINE
+
 
 
 using namespace std;

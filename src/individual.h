@@ -2,6 +2,8 @@
 #define _INDIVIDUAL_H_
 
 #include "landscape.h"
+#include <Rcpp.h>  // <-- ADD THIS LINE
+
 
 class TSimulator;
 

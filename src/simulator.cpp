@@ -4,6 +4,7 @@
 #include <functional>
 #include "simulator.h"
 
+
 #include "randomc/mersenne.cpp"         // members of class TRandomMersenne
 #define STOC_BASE CRandomMersenne
 #include "stocc/stoc1.cpp"            // random library source code
