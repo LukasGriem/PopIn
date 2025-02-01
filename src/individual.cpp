@@ -61,32 +61,32 @@ bool TIndividual::ApplyMortality()
 // ApplySpatialMortality: Kills all individuals at specific locations
 // Returns true if the individual dies and false if the individual survives
 bool TIndividual::ApplySpatialMortality() {
-  if (!simulator) return false;  // Ensure simulator exists
+  if (!simulator) return false;  
   
-  // Get landscape from simulator
   TLandscape* landscape = simulator->GetLandscape();
-  if (!landscape) return false;  // Ensure landscape exists
+  if (!landscape) return false;
   
-  // Get landscape dimensions
-  int max_x = landscape->xmax;  // Directly access xmax
-  int max_y = landscape->ymax;  // Directly access ymax
+  int max_x = landscape->xmax;
+  int max_y = landscape->ymax;
   
-  // Generate a random center point within the landscape bounds
+  // Randomly select a mortality center
   int center_x = rand() % max_x;
   int center_y = rand() % max_y;
   
-  // Define mortality radius
-  int radius = 80;
+  int radius = 20;  // Define mortality radius
   
-  // Compute squared Euclidean distance to avoid sqrt()
-  int dx = hrcenter.x - center_x;
-  int dy = hrcenter.y - center_y;
+  // Compute toroidal (wrapped) Euclidean distance
+  int dx = abs(hrcenter.x - center_x);
+  int dy = abs(hrcenter.y - center_y);
   
-  if (dx * dx + dy * dy <= radius * radius) {
-    return true;  // Kill the individual if within radius
-  }
-  return false;  // Otherwise, survive
+  // Apply periodic boundary conditions
+  dx = std::min(dx, max_x - dx);  // Wrap around in x-direction
+  dy = std::min(dy, max_y - dy);  // Wrap around in y-direction
+  
+  // Apply mortality if within the radius
+  return (dx * dx + dy * dy <= radius * radius);
 }
+
 
 
 
