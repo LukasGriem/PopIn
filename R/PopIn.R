@@ -137,7 +137,7 @@ indmodel <- function(land_r="", param="", file="")
   
   start.time <- date()
   
-  if (isTRUE(identical(par, "")) && isTRUE(identical(file, "")))
+  if (isTRUE(identical(param, "")) && isTRUE(identical(file, "")))
   {
     # if the user does not provide a list or a file with the parameter values
     # use default file
@@ -164,7 +164,7 @@ indmodel <- function(land_r="", param="", file="")
   else if(any(param!="")){
     # if the user provides a list with the parameter values
     # read user list
-    extinction_matrices <- param$extinction_matrices
+    extinction_matrices <- param$extinction_matrices # added this parameter
     n_rep <- param$n_rep
     hab_aff <- param$hab_aff
     n_steps <- param$n_steps 
@@ -251,8 +251,8 @@ indmodel <- function(land_r="", param="", file="")
                                             hr_size, birth_rate, breeding_age, survival, 
                                             distance_weight, dispersal_distance, 
                                             dispersal_mode, sink_avoidance, 
-                                            neigh_avoidance, sink_mortality, file_name_i,
-                                            extinction_matrices)
+                                            neigh_avoidance, sink_mortality, file_name_i
+                                            )
                                 )
                       )
   }  
