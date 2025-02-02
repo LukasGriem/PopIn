@@ -13,6 +13,7 @@ List indmodelseC(
       SEXP land_r,
       int nrow,
       int ncol,
+      SEXP extinction_matrices,  // <-- Fixed: default to empty list
       int n_steps=20,
       int init_population=10, 
       int hr_size=1,
@@ -25,7 +26,6 @@ List indmodelseC(
       double sink_avoidance=0.5,
       double neigh_avoidance=1.0,
       double sink_mortality=0.7,
-      Rcpp::List extinction_matrices = Rcpp::List(),  // <-- Fixed: default to empty list
       const char* file_name="Res_imse")
 {
 
@@ -40,6 +40,8 @@ List indmodelseC(
   double land[landc.size()];
   for(int i=0;i<landc.size();i++)
     land[i]=landc[i];
+  
+  Rcpp::List ext_matrices;
 
 // Stores the simulation parameters in the object param
 TSimParam param;
