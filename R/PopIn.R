@@ -251,7 +251,8 @@ indmodel <- function(land_r="", param="", file="")
                                             hr_size, birth_rate, breeding_age, survival, 
                                             distance_weight, dispersal_distance, 
                                             dispersal_mode, sink_avoidance, 
-                                            neigh_avoidance, sink_mortality, file_name_i
+                                            neigh_avoidance, sink_mortality, file_name_i,
+                                            extinction_matrices
                                             )
                                 )
                       )

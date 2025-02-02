@@ -13,7 +13,7 @@ List indmodelseC(
       SEXP land_r,
       int nrow,
       int ncol,
-      SEXP extinction_matrices,  // <-- Fixed: default to empty list
+      List extinction_matrices,  // <-- Fixed: default to empty list
       int n_steps=20,
       int init_population=10, 
       int hr_size=1,
@@ -41,7 +41,6 @@ List indmodelseC(
   for(int i=0;i<landc.size();i++)
     land[i]=landc[i];
   
-  Rcpp::List ext_matrices;
 
 // Stores the simulation parameters in the object param
 TSimParam param;
