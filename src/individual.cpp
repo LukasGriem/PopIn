@@ -59,27 +59,27 @@ bool TIndividual::ApplyMortality()
    }
 }
 
-// ApplySpatialMortality: Kills all individuals at specific locations
+
+// ApplySpatialMortality: Determines if the individual dies due to spatial disturbance
 // Returns true if the individual dies and false if the individual survives
 bool TIndividual::ApplySpatialMortality(int step) {
-  if (!simulator) return false;
+  if (!simulator) return false; // Ensure simulator exists
   
-  Rcpp::List extinction_matrices = simulator->GetExtinctionMatrices();
+  // Retrieve extinction coordinates for the given step
+  Rcpp::List extinction_list = simulator->GetExtinctionPoint();
+  int center_x = Rcpp::as<Rcpp::NumericVector>(extinction_list[0])[step - 2];  
+  int center_y = Rcpp::as<Rcpp::NumericVector>(extinction_list[1])[step - 2];  
   
-  if (step >= extinction_matrices.size()) return false;  // Prevent out-of-bounds error
-  Rcpp::NumericMatrix extinction_matrix = extinction_matrices[step];
+  // Get disturbance radius
+  int disturb_radius = simulator->GetDisturbRadius();
   
-  int x = hrcenter.x;
-  int y = hrcenter.y;
+  // Compute squared distance from the disturbance center
+  int dx = hrcenter.x - center_x;
+  int dy = hrcenter.y - center_y;
   
-  if (x < 0 || x >= extinction_matrix.nrow() || y < 0 || y >= extinction_matrix.ncol()) {
-    return false;  // Out of bounds, individual survives
-  }
-  
-  double extinction_prob = extinction_matrix(x, y);
-  return (R::runif(0, 1) < extinction_prob);
+  // Return true if within the disturbance radius
+  return (dx * dx + dy * dy <= disturb_radius * disturb_radius);
 }
-
 
 
 

@@ -58,7 +58,8 @@ struct TSimParam
     // Probability of avoiding neighbors during dispersal. Takes values between 0 and 1.
  double sinkmortality;
     // Probability (per dispersal step) of dying in a sink habitat (habitat quality 0, eg. roads)
- Rcpp::List extinction_matrices;  // <-- ADD THIS LINE
+ Rcpp::List ext_point;  // <-- ADD THIS LINE
+ int disturb_radius;
     
  string filename;
 };
@@ -86,7 +87,8 @@ class TSimulator
         double neighavoidance;
         double sinkmortality;
         string filename;
-        Rcpp::List extinction_matrices;  // <-- ADD THIS LINE
+        Rcpp::List ext_point;  // <-- ADD THIS LINE
+        int disturb_radius;
         double optimalfitness;
  public:
         TSimulator(const TSimParam&);
@@ -106,7 +108,8 @@ class TSimulator
         double GetSinkAvoidance() {return sinkavoidance;}
         double GetNeighAvoidance() {return neighavoidance;}
         double GetSinkMortality() {return sinkmortality;}
-        Rcpp::List GetExtinctionMatrices() { return extinction_matrices; }  // <-- Getter function
+        Rcpp::List GetExtinctionPoint() { return ext_point; }  // <-- Getter function
+        int GetDisturbRadius() {return disturb_radius;}
         int GetStep() {return step;}
 		int GetNSteps() {return nsteps;}
         StochasticLib1* sto;

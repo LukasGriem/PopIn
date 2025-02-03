@@ -48,7 +48,9 @@ TSimulator::TSimulator(const TSimParam& param)
  dispersalmode=param.dispersalmode;
  neighavoidance=param.neighavoidance;
  sinkavoidance=param.sinkavoidance;
+ ext_point=param.ext_point;
  sinkmortality=param.sinkmortality;
+ disturb_radius = param.disturb_radius;
     
  filename=param.filename;
 
@@ -130,15 +132,16 @@ void TSimulator::Step()
  population.insert(population.end(), popjuv.begin(), popjuv.end());
  
  
- // apply spatially autocorrelated mortality
- population.erase(
-   remove_if(population.begin(), population.end(),
-             [this](TIndividual& ind) { return ind.ApplySpatialMortality(this->step); }),
-             population.end());
+ landscape->Update(population);  //actualize matrix of free cells opened by spatial mortality
  
  
+  // apply spatial mortality
+  population.erase(remove_if(population.begin(), population.end(),
+                           [&](TIndividual& ind) { return ind.ApplySpatialMortality(step); }),
+                           population.end());
  
  landscape->Update(population);  //actualize matrix of free cells opened by spatial mortality
+
  
  
  /*cout << population.size() << ' '; */

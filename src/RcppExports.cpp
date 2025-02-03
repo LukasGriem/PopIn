@@ -11,8 +11,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // indmodelseC
-List indmodelseC(SEXP land_r, int nrow, int ncol, int n_steps, int init_population, int hr_size, double birth_rate, int breeding_age, double survival, double distance_weight, double dispersal_distance, int dispersal_mode, double sink_avoidance, double neigh_avoidance, double sink_mortality, Rcpp::List extinction_matrices, const char* file_name);
-RcppExport SEXP _PopIn_indmodelseC(SEXP land_rSEXP, SEXP nrowSEXP, SEXP ncolSEXP, SEXP n_stepsSEXP, SEXP init_populationSEXP, SEXP hr_sizeSEXP, SEXP birth_rateSEXP, SEXP breeding_ageSEXP, SEXP survivalSEXP, SEXP distance_weightSEXP, SEXP dispersal_distanceSEXP, SEXP dispersal_modeSEXP, SEXP sink_avoidanceSEXP, SEXP neigh_avoidanceSEXP, SEXP sink_mortalitySEXP, SEXP extinction_matricesSEXP, SEXP file_nameSEXP) {
+List indmodelseC(SEXP land_r, int nrow, int ncol, int n_steps, int init_population, int hr_size, double birth_rate, int breeding_age, double survival, double distance_weight, double dispersal_distance, int dispersal_mode, double sink_avoidance, double neigh_avoidance, double sink_mortality, List ext_point, int disturb_radius, const char* file_name);
+RcppExport SEXP _PopIn_indmodelseC(SEXP land_rSEXP, SEXP nrowSEXP, SEXP ncolSEXP, SEXP n_stepsSEXP, SEXP init_populationSEXP, SEXP hr_sizeSEXP, SEXP birth_rateSEXP, SEXP breeding_ageSEXP, SEXP survivalSEXP, SEXP distance_weightSEXP, SEXP dispersal_distanceSEXP, SEXP dispersal_modeSEXP, SEXP sink_avoidanceSEXP, SEXP neigh_avoidanceSEXP, SEXP sink_mortalitySEXP, SEXP ext_pointSEXP, SEXP disturb_radiusSEXP, SEXP file_nameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -31,15 +31,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type sink_avoidance(sink_avoidanceSEXP);
     Rcpp::traits::input_parameter< double >::type neigh_avoidance(neigh_avoidanceSEXP);
     Rcpp::traits::input_parameter< double >::type sink_mortality(sink_mortalitySEXP);
-    Rcpp::traits::input_parameter< Rcpp::List >::type extinction_matrices(extinction_matricesSEXP);
+    Rcpp::traits::input_parameter< List >::type ext_point(ext_pointSEXP);
+    Rcpp::traits::input_parameter< int >::type disturb_radius(disturb_radiusSEXP);
     Rcpp::traits::input_parameter< const char* >::type file_name(file_nameSEXP);
-    rcpp_result_gen = Rcpp::wrap(indmodelseC(land_r, nrow, ncol, n_steps, init_population, hr_size, birth_rate, breeding_age, survival, distance_weight, dispersal_distance, dispersal_mode, sink_avoidance, neigh_avoidance, sink_mortality, extinction_matrices, file_name));
+    rcpp_result_gen = Rcpp::wrap(indmodelseC(land_r, nrow, ncol, n_steps, init_population, hr_size, birth_rate, breeding_age, survival, distance_weight, dispersal_distance, dispersal_mode, sink_avoidance, neigh_avoidance, sink_mortality, ext_point, disturb_radius, file_name));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_PopIn_indmodelseC", (DL_FUNC) &_PopIn_indmodelseC, 17},
+    {"_PopIn_indmodelseC", (DL_FUNC) &_PopIn_indmodelseC, 18},
     {NULL, NULL, 0}
 };
 

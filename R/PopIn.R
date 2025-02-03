@@ -164,7 +164,6 @@ indmodel <- function(land_r="", param="", file="")
   else if(any(param!="")){
     # if the user provides a list with the parameter values
     # read user list
-    extinction_matrices <- param$extinction_matrices # added this parameter
     n_rep <- param$n_rep
     hab_aff <- param$hab_aff
     n_steps <- param$n_steps 
@@ -183,6 +182,8 @@ indmodel <- function(land_r="", param="", file="")
     writeYN <- param$writeYN
     dir_name <- param$dir_name
     file_name <- param$file_name
+    disturb_radius <- param$disturb_radius
+    ext_point <- param$ext_point
   }
   
   else{
@@ -247,13 +248,14 @@ indmodel <- function(land_r="", param="", file="")
     
     imse_rep <- cbind(imse_rep, 
                       replicate(1, 
-                                indmodelseC(land_r, nrow, ncol, n_steps, init_population, 
-                                            hr_size, birth_rate, breeding_age, survival, 
-                                            distance_weight, dispersal_distance, 
-                                            dispersal_mode, sink_avoidance, 
-                                            neigh_avoidance, sink_mortality, file_name_i,
-                                            extinction_matrices
-                                            )
+                                indmodelseC(land_r = land_r, nrow = nrow, ncol = ncol, n_steps = n_steps, 
+                                            init_population = init_population, hr_size = hr_size, 
+                                            birth_rate = birth_rate, breeding_age = breeding_age, 
+                                            survival = survival, distance_weight = distance_weight, 
+                                            dispersal_distance = dispersal_distance, dispersal_mode = dispersal_mode, 
+                                            sink_avoidance = sink_avoidance, neigh_avoidance = neigh_avoidance, 
+                                            sink_mortality = sink_mortality, file_name = file_name_i, 
+                                            ext_point = ext_point, disturb_radius = disturb_radius)
                                 )
                       )
   }  

@@ -13,7 +13,6 @@ List indmodelseC(
       SEXP land_r,
       int nrow,
       int ncol,
-      List extinction_matrices,  // <-- Fixed: default to empty list
       int n_steps=20,
       int init_population=10, 
       int hr_size=1,
@@ -26,6 +25,8 @@ List indmodelseC(
       double sink_avoidance=0.5,
       double neigh_avoidance=1.0,
       double sink_mortality=0.7,
+      List ext_point=R_NilValue,
+      int disturb_radius = 10,
       const char* file_name="Res_imse")
 {
 
@@ -57,9 +58,10 @@ TSimParam param;
    param.dispersaldistance = dispersal_distance;
    param.dispersalmode = dispersal_mode;
    param.sinkavoidance = sink_avoidance;
+   param.ext_point = ext_point;
+   param.disturb_radius = disturb_radius;
    param.neighavoidance = neigh_avoidance;
    param.sinkmortality = sink_mortality;
-   param.extinction_matrices = extinction_matrices;  // <-- ADDed THIS LINE
    param.filename = file_name;
       // name the file that is created with the results
       // of the simulation when indmodel.se is run
