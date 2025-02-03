@@ -62,6 +62,7 @@ bool TIndividual::ApplyMortality()
 
 // ApplySpatialMortality: Determines if the individual dies due to spatial disturbance
 // Returns true if the individual dies and false if the individual survives
+// ApplySpatialMortality: Determines if the individual dies due to spatial disturbance with toroidal wrapping
 bool TIndividual::ApplySpatialMortality(int step) {
   if (!simulator) return false; // Ensure simulator exists
   
@@ -73,13 +74,21 @@ bool TIndividual::ApplySpatialMortality(int step) {
   // Get disturbance radius
   int disturb_radius = simulator->GetDisturbRadius();
   
-  // Compute squared distance from the disturbance center
-  int dx = hrcenter.x - center_x;
-  int dy = hrcenter.y - center_y;
+  // Get landscape pointer and dimensions
+  TLandscape* landscape = simulator->GetLandscape();
+  if (!landscape) return false;  // Ensure landscape exists
+  
+  int width = landscape->xmax;   // Get xmax (landscape width)
+  int height = landscape->ymax;  // Get ymax (landscape height)
+  
+  // Compute wrapped distances in toroidal space
+  int dx = std::min(std::abs(hrcenter.x - center_x), width - std::abs(hrcenter.x - center_x));
+  int dy = std::min(std::abs(hrcenter.y - center_y), height - std::abs(hrcenter.y - center_y));
   
   // Return true if within the disturbance radius
   return (dx * dx + dy * dy <= disturb_radius * disturb_radius);
 }
+
 
 
 
