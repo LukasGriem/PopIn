@@ -64,19 +64,19 @@ bool TIndividual::ApplyMortality()
 bool TIndividual::ApplySpatialMortality(int step) {
   if (!simulator) return false;
   
-  Rcpp::List extinction_matrices = simulator->GetExtinctionMatrices();
+  Rcpp::List disturbance_matrices = simulator->GetDisturbanceMatrices(); // retrieve matrix
   
-  if (step >= extinction_matrices.size()) return false;  // Prevent out-of-bounds error
-  Rcpp::NumericMatrix extinction_matrix = extinction_matrices[step];
+  if (step >= disturbance_matrices.size()) return false;  // Prevent out-of-bounds error
+  Rcpp::NumericMatrix disturbance_matrix = disturbance_matrices[step];
   
   int x = hrcenter.x;
   int y = hrcenter.y;
   
-  if (x < 0 || x >= extinction_matrix.nrow() || y < 0 || y >= extinction_matrix.ncol()) {
+  if (x < 0 || x >= disturbance_matrix.nrow() || y < 0 || y >= disturbance_matrix.ncol()) {
     return false;  // Out of bounds, individual survives
   }
   
-  double extinction_prob = extinction_matrix(x, y);
+  double extinction_prob = disturbance_matrix(x, y);
   return (R::runif(0, 1) < extinction_prob);
 }
 

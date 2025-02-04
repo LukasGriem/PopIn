@@ -13,7 +13,7 @@ List indmodelseC(
       SEXP land_r,
       int nrow,
       int ncol,
-      List extinction_matrices,  // <-- Fixed: default to empty list
+      List disturbance_matrices,  // <-- Fixed: default to empty list
       int n_steps=20,
       int init_population=10, 
       int hr_size=1,
@@ -59,7 +59,7 @@ TSimParam param;
    param.sinkavoidance = sink_avoidance;
    param.neighavoidance = neigh_avoidance;
    param.sinkmortality = sink_mortality;
-   param.extinction_matrices = extinction_matrices;  // <-- ADDed THIS LINE
+   param.disturbance_matrices = disturbance_matrices;  
    param.filename = file_name;
       // name the file that is created with the results
       // of the simulation when indmodel.se is run
@@ -68,8 +68,9 @@ TSimParam param;
 
    List popsizehist(n_steps + 1);
       // vector which stores population sizes at each time step
-
    popsizehist[0]=simulator.GetPopulationSize(); // stores first value of population size
+   
+   
 
    for (int i=1; i<=n_steps; i++)
    {
