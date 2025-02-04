@@ -164,44 +164,56 @@ bool TLandscape::ChooseStartingPointMode0(TCell& startcell)
 
 // Local dispersal mode: local habitat choice in a kernel (NEW: SELECTS BEST AVAILABLE HABITAT IN KERNEL)
 // Chooses starting point for the home range based on local dispersal from mother cell
-bool TLandscape::ChooseStartingPointMode1(TCell& startcell,
-                                          TCell& mothercell)
-{
+bool TLandscape::ChooseStartingPointMode1(TCell& startcell, TCell& mothercell) {
   int r = simulator->GetDispersalDistance();
-  int rsq = SQR(r);                 // stores r^2 in variable rsq
+  Rcpp::NumericMatrix dispersal_mortality_mat = simulator->GetDispersalMortalityMat();
+  int rsq = SQR(r);
   
-  vector<TCell> vlandmax(4 * rsq);  // Creates vector to store dispersal kernel
-  int ncells = 0;
+  double local_maxaffty = -1;
+  TCell best_cell;
+  int min_vn_distance = INT_MAX;
   
-  double local_maxaffty = -1; // Initialize local maximum affinity
-  
-  for (int i = MAX(mothercell.x - r, 0); i < MIN(mothercell.x + r + 1, xmax); i++)
-    for (int j = MAX(mothercell.y - r, 0); j < MIN(mothercell.y + r + 1, ymax); j++)
-      if (SQR(i - mothercell.x) + SQR(j - mothercell.y) <= rsq) // Check if cell is in circle
-        local_maxaffty = MAX(local_maxaffty, mfree[i][j]); // Update local max affinity
-      
-      if (local_maxaffty < 0) // If no cells have affinity > -1
-        return false;
-      
-      for (int i = MAX(mothercell.x - r, 0); i < MIN(mothercell.x + r + 1, xmax); i++)
-        for (int j = MAX(mothercell.y - r, 0); j < MIN(mothercell.y + r + 1, ymax); j++)
-          if (mfree[i][j] == local_maxaffty && // Check if the cell matches local max affinity
-              SQR(i - mothercell.x) + SQR(j - mothercell.y) <= rsq) // and lies in the circle
-          {
-            vlandmax[ncells] = TCell(i, j); // Add the cell to the dispersal kernel
-            ncells++;
+  // Find highest affinity and best cell with shortest Von Neumann distance
+  for (int i = MAX(mothercell.x - r, 0), x_max = MIN(mothercell.x + r + 1, xmax); i < x_max; i++) {
+    for (int j = MAX(mothercell.y - r, 0), y_max = MIN(mothercell.y + r + 1, ymax); j < y_max; j++) {
+      if (SQR(i - mothercell.x) + SQR(j - mothercell.y) <= rsq) {
+        double affty = mfree[i][j];
+        if (affty > local_maxaffty) {
+          local_maxaffty = affty;
+          best_cell = TCell(i, j);
+          min_vn_distance = abs(i - mothercell.x) + abs(j - mothercell.y);
+        } else if (affty == local_maxaffty) {
+          int vn_distance = abs(i - mothercell.x) + abs(j - mothercell.y);
+          if (vn_distance < min_vn_distance) {
+            best_cell = TCell(i, j);
+            min_vn_distance = vn_distance;
           }
-          
-          if (ncells > 0)
-          {
-            int start = simulator->sto->IRandom(0, ncells - 1); // Randomly select a cell
-            startcell = vlandmax[start]; // Set the chosen cell as the start cell
-            return true;
-          }
-          else
-            return false;
+        }
+      }
+    }
+  }
+  
+  if (local_maxaffty < 0)
+    return false;
+  
+  // Compute survival probability along the Von Neumann path
+  double survival_prob = 1.0;
+  for (int x = mothercell.x, y = mothercell.y; x != best_cell.x || y != best_cell.y;) {
+    if (x < best_cell.x) x++;
+    else if (x > best_cell.x) x--;
+    else if (y < best_cell.y) y++;
+    else if (y > best_cell.y) y--;
+    
+    survival_prob *= (1.0 - dispersal_mortality_mat(x, y));
+    if (survival_prob <= 0.0) return false;  // Early exit if death is certain
+  }
+  
+  return simulator->sto->Random() >= (1.0 - survival_prob) ? (startcell = best_cell, true) : false;
 }
-// 
+
+
+
+
 // Local dispersal mode: random walk
 // Chooses starting point for the home range based on random-walk from mother cell
 bool TLandscape::ChooseStartingPointMode2(TCell& startcell,

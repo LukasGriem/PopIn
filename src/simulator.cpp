@@ -50,6 +50,7 @@ TSimulator::TSimulator(const TSimParam& param)
  sinkavoidance=param.sinkavoidance;
  sinkmortality=param.sinkmortality;
  disturbance_matrices=param.disturbance_matrices; // added here
+ dispersal_mortality_mat=param.dispersal_mortality_mat; // added here
  filename=param.filename;
 
  // the first step of the simulation is run here so the step counter is set to 1

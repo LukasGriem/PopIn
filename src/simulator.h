@@ -59,6 +59,7 @@ struct TSimParam
  double sinkmortality;
     // Probability (per dispersal step) of dying in a sink habitat (habitat quality 0, eg. roads)
  Rcpp::List disturbance_matrices; 
+ Rcpp::NumericMatrix dispersal_mortality_mat;
     
  string filename;
 };
@@ -87,6 +88,7 @@ class TSimulator
         double sinkmortality;
         string filename;
         Rcpp::List disturbance_matrices; 
+        Rcpp::NumericMatrix dispersal_mortality_mat;
         double optimalfitness;
  public:
         TSimulator(const TSimParam&);
@@ -107,6 +109,7 @@ class TSimulator
         double GetNeighAvoidance() {return neighavoidance;}
         double GetSinkMortality() {return sinkmortality;}
         Rcpp::List GetDisturbanceMatrices() { return disturbance_matrices; }  // <-- Getter function
+        Rcpp::NumericMatrix GetDispersalMortalityMat() {return dispersal_mortality_mat;}
         int GetStep() {return step;}
 		int GetNSteps() {return nsteps;}
         StochasticLib1* sto;

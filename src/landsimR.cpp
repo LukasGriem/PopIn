@@ -13,7 +13,8 @@ List indmodelseC(
       SEXP land_r,
       int nrow,
       int ncol,
-      List disturbance_matrices,  // <-- Fixed: default to empty list
+      List disturbance_matrices,
+      Rcpp::NumericMatrix dispersal_mortality_mat,
       int n_steps=20,
       int init_population=10, 
       int hr_size=1,
@@ -60,6 +61,7 @@ TSimParam param;
    param.neighavoidance = neigh_avoidance;
    param.sinkmortality = sink_mortality;
    param.disturbance_matrices = disturbance_matrices;  
+   param.dispersal_mortality_mat = dispersal_mortality_mat;
    param.filename = file_name;
       // name the file that is created with the results
       // of the simulation when indmodel.se is run
