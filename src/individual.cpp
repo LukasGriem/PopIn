@@ -45,7 +45,7 @@ void TIndividual::OutputHomeRange(ostream& os)
 
 bool TIndividual::ApplyMortality()
 {
- if (simulator->GetSurvival()>=1.0) //Deterministic simulation: deterministic death
+ if (simulator->GetSurvival()>1.0) //Deterministic simulation: deterministic death
    {
    if(age < simulator->GetSurvival()) //if age smaller than maximum age
      return false;                    //then individual survives
