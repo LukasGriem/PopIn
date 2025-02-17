@@ -60,7 +60,7 @@ struct TSimParam
     // Probability (per dispersal step) of dying in a sink habitat (habitat quality 0, eg. roads)
  Rcpp::List disturbance_matrices; 
  Rcpp::NumericMatrix dispersal_mortality_mat;
-    
+ double p_relocation;
  string filename;
 };
 
@@ -90,6 +90,7 @@ class TSimulator
         Rcpp::List disturbance_matrices; 
         Rcpp::NumericMatrix dispersal_mortality_mat;
         double optimalfitness;
+        double p_relocation;
  public:
         TSimulator(const TSimParam&);
         ~TSimulator();

@@ -114,13 +114,14 @@ void TIndividual::CalculateFledglings()
    d *= simulator->GetBirthRate();           // multiplies fitness by fecundity (b0 in the model)
 												  // this was active in the initial version
    d /= simulator->GetOptimalFitness();           // normalizes by the optimal home-range fitness (Phi in the model)
-   if (simulator->GetSurvival()>=1.0)             //Deterministic simulation
+   if (simulator->GetSurvival()>1.0)             //Deterministic simulation
       fledglings = iround(d);                     //The number of fledglings equals the fecundity
    else
       fledglings = simulator->sto->Poisson(d);    //The number of fledglings is a Poisson with mean equal to fecundity
    }
  else fledglings = 0;    //if individual has not reached breeding age
 }
+
 
 
 // iround: Helper function that rounds a real number to the nearest integer

@@ -184,6 +184,7 @@ indmodel <- function(land_r="", param="", file="")
     dir_name <- param$dir_name
     file_name <- param$file_name
     dispersal_mortality_mat <- param$dispersal_mortality_mat
+    p_relocation <- param$p_relocation
   }
   
   else{
@@ -256,7 +257,7 @@ indmodel <- function(land_r="", param="", file="")
                                             dispersal_mode = dispersal_mode, sink_avoidance = sink_avoidance, 
                                             neigh_avoidance = neigh_avoidance, sink_mortality = sink_mortality, 
                                             file_name = file_name_i, disturbance_matrices = disturbance_matrices,
-                                            dispersal_mortality_mat = dispersal_mortality_mat
+                                            dispersal_mortality_mat = dispersal_mortality_mat, p_relocation = p_relocation
                                             )
                                 )
                       )

@@ -20,10 +20,10 @@ class TIndividual
          bool HasEmptyHomeRange() {return homerange.empty();}
          void OutputHomeRange(ostream&);
          void SettleHomeRange();
+         THomeRange homerange;
  private:
          unsigned int age;
          int fledglings;
-         THomeRange homerange;
          TCell hrcenter;
          TCell hrcentermother;
          TSimulator* simulator;

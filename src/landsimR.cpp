@@ -27,7 +27,8 @@ List indmodelseC(
       double sink_avoidance=0.5,
       double neigh_avoidance=1.0,
       double sink_mortality=0.7,
-      const char* file_name="Res_imse")
+      const char* file_name="Res_imse",
+      double p_relocation=9)
 {
 
 // land_r is the input landscape that is obtained from R, which is a matrix
@@ -62,6 +63,7 @@ TSimParam param;
    param.sinkmortality = sink_mortality;
    param.disturbance_matrices = disturbance_matrices;  
    param.dispersal_mortality_mat = dispersal_mortality_mat;
+   param.p_relocation = p_relocation;
    param.filename = file_name;
       // name the file that is created with the results
       // of the simulation when indmodel.se is run

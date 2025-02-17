@@ -52,6 +52,7 @@ TSimulator::TSimulator(const TSimParam& param)
  disturbance_matrices=param.disturbance_matrices; // added here
  dispersal_mortality_mat=param.dispersal_mortality_mat; // added here
  filename=param.filename;
+ p_relocation = param.p_relocation;
 
  // the first step of the simulation is run here so the step counter is set to 1
  step=1;
@@ -118,6 +119,7 @@ void TSimulator::Step()
                             mem_fun_ref(&TIndividual::ApplyMortality)),
                   popjuv.end());
  
+ 
  //settle the home-range of each juvenile
  for_each(popjuv.begin(),popjuv.end(),
           mem_fun_ref(&TIndividual::SettleHomeRange));
@@ -137,11 +139,23 @@ void TSimulator::Step()
              [this](TIndividual& ind) { return ind.ApplySpatialMortality(this->step); }),
              population.end());
  
- 
- 
  landscape->Update(population);  //actualize matrix of free cells opened by spatial mortality
  
  
+  // apply home range relocation
+  std::vector<TIndividual*> shuffled_pop; // suffle individual index to start with random individual
+  for (auto& ind : population) shuffled_pop.push_back(&ind);
+  std::random_shuffle(shuffled_pop.begin(), shuffled_pop.end());
+  
+  for (auto* ind : shuffled_pop) { // clear current home range and select new one when random number < probability of relocation
+    if (sto->Random() < p_relocation) {
+      ind->homerange.clear();
+      ind->SettleHomeRange();
+      landscape->Update(population); // update home range map after each relocation
+    }
+  }
+  
+  
  /*cout << population.size() << ' '; */
  
  //writes in the output file the list of the cells of each individual and the ages of each individual

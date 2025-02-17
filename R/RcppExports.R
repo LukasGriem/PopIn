@@ -5,7 +5,7 @@
 #' @importFrom Rcpp sourceCpp
 NULL
 
-indmodelseC <- function(land_r, nrow, ncol, disturbance_matrices, dispersal_mortality_mat, n_steps = 20L, init_population = 10L, hr_size = 1L, birth_rate = 2.0, breeding_age = 1L, survival = 0.4, distance_weight = 0.001, dispersal_distance = 5.0, dispersal_mode = 2L, sink_avoidance = 0.5, neigh_avoidance = 1.0, sink_mortality = 0.7, file_name = "Res_imse") {
-    .Call('_PopIn_indmodelseC', PACKAGE = 'PopIn', land_r, nrow, ncol, disturbance_matrices, dispersal_mortality_mat, n_steps, init_population, hr_size, birth_rate, breeding_age, survival, distance_weight, dispersal_distance, dispersal_mode, sink_avoidance, neigh_avoidance, sink_mortality, file_name)
+indmodelseC <- function(land_r, nrow, ncol, disturbance_matrices, dispersal_mortality_mat, n_steps = 20L, init_population = 10L, hr_size = 1L, birth_rate = 2.0, breeding_age = 1L, survival = 0.4, distance_weight = 0.001, dispersal_distance = 5.0, dispersal_mode = 2L, sink_avoidance = 0.5, neigh_avoidance = 1.0, sink_mortality = 0.7, file_name = "Res_imse", p_relocation = 9) {
+    .Call('_PopIn_indmodelseC', PACKAGE = 'PopIn', land_r, nrow, ncol, disturbance_matrices, dispersal_mortality_mat, n_steps, init_population, hr_size, birth_rate, breeding_age, survival, distance_weight, dispersal_distance, dispersal_mode, sink_avoidance, neigh_avoidance, sink_mortality, file_name, p_relocation)
 }
 
