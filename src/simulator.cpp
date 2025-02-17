@@ -143,18 +143,15 @@ void TSimulator::Step()
  
  
   // apply home range relocation
-  std::vector<TIndividual*> shuffled_pop; // suffle individual index to start with random individual
-  for (auto& ind : population) shuffled_pop.push_back(&ind);
-  std::random_shuffle(shuffled_pop.begin(), shuffled_pop.end());
+  for_each(population.begin(), population.end(),
+           bind2nd(mem_fun_ref(&TIndividual::RelocateHomeRange), p_relocation));
   
-  for (auto* ind : shuffled_pop) { // clear current home range and select new one when random number < probability of relocation
-    if (sto->Random() < p_relocation) {
-      ind->homerange.clear();
-      ind->SettleHomeRange();
-      landscape->Update(population); // update home range map after each relocation
-    }
-  }
+  // kill individuals that died during relocation dispersal
+  population.erase(remove_if(population.begin(), population.end(),
+                             mem_fun_ref(&TIndividual::HasEmptyHomeRange)),
+                             population.end());
   
+  landscape->Update(population);  //actualize matrix of free cells opened by spatial mortality
   
  /*cout << population.size() << ' '; */
  

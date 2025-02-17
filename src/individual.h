@@ -20,6 +20,7 @@ class TIndividual
          bool HasEmptyHomeRange() {return homerange.empty();}
          void OutputHomeRange(ostream&);
          void SettleHomeRange();
+         void RelocateHomeRange(double p_relocation);
          THomeRange homerange;
  private:
          unsigned int age;

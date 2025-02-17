@@ -31,6 +31,29 @@ void TIndividual::SettleHomeRange()
 }
 
 
+// relocate home range: selects a new home range for individual
+
+void TIndividual::RelocateHomeRange(double p_relocation)
+{
+  if (simulator->sto->Random() < p_relocation) {            // Check relocation probability
+    TLandscape* landscape = simulator->GetLandscape();
+    
+    homerange.clear();                                     // Clear current home range
+    landscape->Update(simulator->population);              // Update mfree with current population
+    
+    if (!landscape->PlaceHomeRange(homerange, hrcenter)) { // Try placing home range
+      homerange.clear();                                 // If dispersal mortality occurs, no home range is assigned
+      return;                                            // Individual is effectively removed (dead)
+    }
+    
+    hrcenter = landscape->HomeRangeCenter(homerange);      // Update HR center if successful
+  }
+}
+
+
+
+
+
 // OutputHomeRange: Writes the homerange cells in a file
 
 void TIndividual::OutputHomeRange(ostream& os)

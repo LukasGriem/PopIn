@@ -71,7 +71,6 @@ class TSimulator
         void OutputGeneration();
         void OutputParameters();
         // data members
-        TPopulation population;  //population of settlers
         TLandscape* landscape;
         int nsteps;
         unsigned int hrsize;
@@ -93,6 +92,7 @@ class TSimulator
         double p_relocation;
  public:
         TSimulator(const TSimParam&);
+        TPopulation population;  //population of settlers
         ~TSimulator();
         void Step();
         unsigned int GetHomeRangeSize() {return hrsize;}
