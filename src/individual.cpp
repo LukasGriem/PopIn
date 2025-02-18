@@ -35,22 +35,20 @@ void TIndividual::SettleHomeRange()
 
 void TIndividual::RelocateHomeRange(double p_relocation)
 {
-  if (simulator->sto->Random() < p_relocation) {            // Check relocation probability
+  if (simulator->sto->Random() < p_relocation) {            
     TLandscape* landscape = simulator->GetLandscape();
     
-    homerange.clear();                                     // Clear current home range
-    landscape->Update(simulator->population);              // Update mfree with current population
+    homerange.clear();                 // delete current home range                    
+    landscape->Update(simulator->population);              
     
-    if (!landscape->PlaceHomeRange(homerange, hrcenter)) { // Try placing home range
-      homerange.clear();                                 // If dispersal mortality occurs, no home range is assigned
-      return;                                            // Individual is effectively removed (dead)
+    
+    if (!landscape->PlaceHomeRange(homerange, hrcenter)) { // place new home range from old home range center
+      homerange.clear();          // if dies during dispersal, clear                       
+      return;                                            
     }
-    
-    hrcenter = landscape->HomeRangeCenter(homerange);      // Update HR center if successful
+    hrcenter = landscape->HomeRangeCenter(homerange);      
   }
 }
-
-
 
 
 

@@ -162,7 +162,7 @@ bool TLandscape::ChooseStartingPointMode0(TCell& startcell)
  return true;
 }
 
-// Local dispersal mode: local habitat choice in a kernel (NEW: SELECTS BEST AVAILABLE HABITAT IN KERNEL)
+// Local dispersal mode: local habitat choice in a kernel (NEW: SELECTS BEST AVAILABLE HABITAT IN KERNEL WITH SHORTEST DISTANCE)
 // Chooses starting point for the home range based on local dispersal from mother cell
 bool TLandscape::ChooseStartingPointMode1(TCell& startcell, TCell& mothercell) {
   int r = simulator->GetDispersalDistance();
@@ -302,23 +302,28 @@ bool TLandscape::ChooseStartingPointMode2(TCell& startcell,
 
 // PlaceHomeRange: places the home range in the landscape starting the dispersal in the mother cell
 
-bool TLandscape::PlaceHomeRange(THomeRange& homerange,
-                                TCell& hrcentermother)
+bool TLandscape::PlaceHomeRange(THomeRange& homerange, TCell& hrcentermother)
 {
- TCell start;
-
- while (ChooseStartingPoint(start, hrcentermother))   // while it is possible to find a starting cell for the HR expansion
-    {
-    mfree[start.x][start.y]=-1;
-    homerange.push_back(start);                       // Stores the starting cell in the home range
-    if (ExpandHomeRange(homerange))                   // If it is possible to exand home range to its desired size
-      return true;                                    // return succes
-    else homerange.clear();                           // else fails - it seems we also need to release back the cells to mfree
-                                                      // and it is not being done, possible bug for local dispersal with HR>1
+  TCell start;
+  
+  while (ChooseStartingPoint(start, hrcentermother)) {
+    mfree[start.x][start.y] = -1;
+    homerange.push_back(start);                        // Stores the starting cell in the home range
+    
+    if (ExpandHomeRange(homerange)) {                  // If home range expansion succeeds
+      for (const auto& cell : homerange) {
+        std::cout << "{" << cell.x << "," << cell.y << "} ";
+      }
+      std::cout << std::endl;
+      return true;
+    } else {
+      homerange.clear();
     }
-
- return false;    // if it was not possible to find a start cell fails
+  }
+  
+  return false;
 }
+
 
 //---------------------------------------------------------------------------
 
@@ -397,26 +402,30 @@ TCell TLandscape::ChoosePoint(const THomeRange& homerange,
 
 //---------------------------------------------------------------------------
 
-TCell TLandscape::HomeRangeCenter (const THomeRange& homerange)
-{
- THomeRange::const_iterator i;
- double x=0;
- double y=0;
- double puse=0;
-
- if (homerange.size()==1)
-	 return *homerange.begin();
-	
- for (i=homerange.begin(); i!=homerange.end(); ++i)
-   {
-   puse += mland[i->x][i->y];
-   x += i->x * mland[i->x][i->y];
-   y += i->y * mland[i->x][i->y];
-   }
- if (homerange.empty())
-   return TCell(0,0);
- return TCell(round(x/puse),round(y/puse));
+TCell TLandscape::HomeRangeCenter (const THomeRange& homerange) {
+  THomeRange::const_iterator i;
+  double x=0, y=0, puse=0;
+  
+  if (homerange.size()==1) return *homerange.begin();
+  
+  for (i=homerange.begin(); i!=homerange.end(); ++i) {
+    puse += mland[i->x][i->y];
+    x += i->x * mland[i->x][i->y];
+    y += i->y * mland[i->x][i->y];
+  }
+  
+  if (homerange.empty()) return TCell(0,0);
+  if (puse == 0) { // if all cells are 0, calculate normal and not weighted mean
+    x = y = 0;
+    for (i=homerange.begin(); i!=homerange.end(); ++i) {
+      x += i->x;
+      y += i->y;
+    }
+    return TCell(round(x/homerange.size()), round(y/homerange.size()));
+  }
+  return TCell(round(x/puse), round(y/puse));
 }
+
 
 //---------------------------------------------------------------------------
 double TLandscape::EvaluatePoint (const TCell& pt, const TCell& ctr)
