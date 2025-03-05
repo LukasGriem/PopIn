@@ -165,107 +165,116 @@ bool TLandscape::ChooseStartingPointMode0(TCell& startcell)
 // Local dispersal mode: local habitat choice in a kernel (NEW: SELECTS BEST AVAILABLE HABITAT IN KERNEL WITH SHORTEST DISTANCE)
 // Chooses starting point for the home range based on local dispersal from mother cell
 bool TLandscape::ChooseStartingPointMode1(TCell& startcell, TCell& mothercell) {
-  // ------------------------------------------------------------
-  // 0) Setup and pick best_cell by your usual affinity logic
-  // ------------------------------------------------------------
   int r = simulator->GetDispersalDistance();
   Rcpp::NumericMatrix dispersal_mortality_mat = simulator->GetDispersalMortalityMat();
   
-  int rsq = SQR(r);
   double local_maxaffty = -1.0;
   TCell best_cell;
   int min_vn_distance = INT_MAX;
   
-  for (int i = std::max(mothercell.x - r, 0), x_max = std::min(mothercell.x + r + 1, xmax); i < x_max; i++) {
-    for (int j = std::max(mothercell.y - r, 0), y_max = std::min(mothercell.y + r + 1, ymax); j < y_max; j++) {
-      if (SQR(i - mothercell.x) + SQR(j - mothercell.y) <= rsq) {
-        double affty = mfree[i][j];
-        // Same logic: prefer higher affinity; break ties by smaller Von Neumann distance
-        if (affty > local_maxaffty) {
-          local_maxaffty = affty;
-          best_cell = TCell(i, j);
-          min_vn_distance = std::abs(i - mothercell.x) + std::abs(j - mothercell.y);
-        } else if (affty == local_maxaffty) {
-          int vn_distance = std::abs(i - mothercell.x) + std::abs(j - mothercell.y);
-          if (vn_distance < min_vn_distance) {
-            best_cell = TCell(i, j);
-            min_vn_distance = vn_distance;
-          }
-        }
+  // 0) Pick the best cell by iterating only over those cells reachable in ≤ r Manhattan steps.
+  // For each row index i in the range, the valid j values are given by:
+  //    |i - mothercell.x| + |j - mothercell.y| ≤ r  =>  |j - mothercell.y| ≤ r - |i - mothercell.x|
+  int i_lower = std::max(mothercell.x - r, 0);
+  int i_upper = std::min(mothercell.x + r, xmax - 1);
+  for (int i = i_lower; i <= i_upper; i++) {
+    int dy = r - std::abs(i - mothercell.x);
+    int j_lower = std::max(mothercell.y - dy, 0);
+    int j_upper = std::min(mothercell.y + dy, ymax - 1);
+    for (int j = j_lower; j <= j_upper; j++) {
+      double affty = mfree[i][j];
+      int vn_distance = std::abs(i - mothercell.x) + std::abs(j - mothercell.y);
+      // Prefer higher affinity; break ties by choosing the cell with the shorter Manhattan distance
+      if (affty > local_maxaffty) {
+        local_maxaffty = affty;
+        best_cell = TCell(i, j);
+        min_vn_distance = vn_distance;
+      } else if (affty == local_maxaffty && vn_distance < min_vn_distance) {
+        best_cell = TCell(i, j);
+        min_vn_distance = vn_distance;
       }
     }
   }
   
-  // If no cell had an affinity >= 0, we fail
-  if (local_maxaffty < 0.0) {
+  if (local_maxaffty < 0.0)
     return false;
-  }
   
-  // ------------------------------------------------------------
-  // 1) Prepare a 2D array to store the *best survival probability*
-  //    of reaching each cell in up to 'r' steps.
-  // ------------------------------------------------------------
+  // 1) Set up the best_survival matrix and predecessor matrix.
   std::vector<std::vector<double>> best_survival(xmax, std::vector<double>(ymax, -1.0));
-  
-  // The mother cell can be reached with survival=1 initially
   best_survival[mothercell.x][mothercell.y] = 1.0;
   
-  // Offsets for 4-neighbor (Von Neumann) adjacency
+  // decomment when checking exact path
+  // std::vector<std::vector<std::pair<int,int>>> predecessor(
+  //     xmax, std::vector<std::pair<int,int>>(ymax, {-1, -1})
+  // );
+  
+  // 2) Use a frontier-based approach to update survival probabilities.
+  std::vector<std::pair<int,int>> frontier;
+  frontier.push_back({mothercell.x, mothercell.y});
+  
   const int dx[4] = {1, -1, 0, 0};
   const int dy[4] = {0, 0, 1, -1};
   
-  // ------------------------------------------------------------
-  // 2) Do up to 'r' "expansion passes" to update neighbors
-  //    with the best possible survival found so far
-  // ------------------------------------------------------------
+  // Expand for up to r steps.
   for (int step = 0; step < r; step++) {
-    // For each cell that currently has some survival probability ...
-    for (int x = 0; x < xmax; x++) {
-      for (int y = 0; y < ymax; y++) {
-        double surv_here = best_survival[x][y];
-        // If no route to (x,y) so far, skip
-        if (surv_here < 0.0) continue;
-        
-        // Try to improve the survival for the neighbors
-        for (int k = 0; k < 4; k++) {
-          int nx = x + dx[k];
-          int ny = y + dy[k];
-          // Bounds check
-          if (nx < 0 || nx >= xmax || ny < 0 || ny >= ymax) {
-            continue;
-          }
-          // Potential new survival if we move there
-          double new_surv = surv_here * (1.0 - dispersal_mortality_mat(nx, ny));
-          // Update neighbor if this route is better
-          if (new_surv > best_survival[nx][ny]) {
-            best_survival[nx][ny] = new_surv;
-          }
+    std::vector<std::pair<int,int>> next_frontier;
+    for (const auto &cell : frontier) {
+      int x = cell.first;
+      int y = cell.second;
+      double surv_here = best_survival[x][y];
+      for (int k = 0; k < 4; k++) {
+        int nx = x + dx[k];
+        int ny = y + dy[k];
+        if (nx < 0 || nx >= xmax || ny < 0 || ny >= ymax)
+          continue;
+        double new_surv = surv_here * (1.0 - dispersal_mortality_mat(nx, ny));
+        if (new_surv > best_survival[nx][ny]) {
+          best_survival[nx][ny] = new_surv;
+          // predecessor[nx][ny] = {x, y};
+          next_frontier.push_back({nx, ny});
         }
       }
     }
+    if (next_frontier.empty())
+      break;
+    frontier = std::move(next_frontier);
   }
   
-  // After 'r' passes, best_survival[best_cell.x][best_cell.y]
-  // is the maximum possible survival probability to that cell
-  // in at most r steps.
   double final_survival = best_survival[best_cell.x][best_cell.y];
-  
-  // If we never found a route with > 0 survival, fail
-  if (final_survival <= 0.0) {
+  if (final_survival <= 0.0)
     return false;
-  }
   
-  // ------------------------------------------------------------
-  // 3) Final random check
-  // ------------------------------------------------------------
-  // Survives if random draw < final_survival
+  // 3) Reconstruct the best path from mothercell to best_cell.
+  // std::vector<TCell> path;
+  // TCell current = best_cell;
+  // path.push_back(current);
+  // while (!(current.x == mothercell.x && current.y == mothercell.y)) {
+  //   std::pair<int,int> pred = predecessor[current.x][current.y];
+  //   if (pred.first == -1 && pred.second == -1)
+  //     break;
+  //   current = TCell(pred.first, pred.second);
+  //   path.push_back(current);
+  // }
+  // std::reverse(path.begin(), path.end());
+  
+  // 4) Print the best path and survival probability.
+  // std::cout << "Best path (mothercell -> best_cell): ";
+  // for (size_t i = 0; i < path.size(); i++) {
+  //   std::cout << "(" << path[i].x << "," << path[i].y << ")";
+  //   if (i < path.size() - 1)
+  //     std::cout << " -> ";
+  // }
+  // std::cout << " with survival probability: " << final_survival << std::endl;
+  
+  // 5) Final random check.
   if (simulator->sto->Random() < final_survival) {
     startcell = best_cell;
     return true;
-  } else {
-    return false;
   }
+  return false;
 }
+
+
 
 
 
